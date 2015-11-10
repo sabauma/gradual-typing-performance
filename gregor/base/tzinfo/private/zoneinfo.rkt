@@ -8,7 +8,7 @@
 (require "generics.rkt"
          "structs.rkt"
          "os/unix.rkt"
-         "os/windows.rkt"
+         #|"os/windows.rkt"|#
          "tzfile-parser.rkt"
          "tabfile-parser.rkt"
          "zoneinfo-search.rkt")
@@ -58,8 +58,8 @@
           (detect-tzid/unix (zoneinfo-dir zi)
                             (find-zoneinfo-directory default-zoneinfo-search-path)
                             (tzinfo->all-tzids zi))]
-         [(windows)
-          (detect-tzid/windows)]
+         #|[(windows)|#
+          #|(detect-tzid/windows)]|#
          [else
           #f]))
 

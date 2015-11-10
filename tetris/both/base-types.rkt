@@ -13,8 +13,8 @@
   [#:struct world ([tetra : tetra]
                    [blocks : (Listof Block)])])
 
-(require/typed 2htdp/image 
-  [#:opaque Image image?])
+#|(require/typed 2htdp/image |#
+  #|[#:opaque Image image?])|#
 
 (define-type Posn posn)
 (define-type Block block)
@@ -34,5 +34,4 @@
  Color
  BSet
  Color
- BSet
- Image)
+ BSet)
