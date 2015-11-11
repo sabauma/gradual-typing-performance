@@ -137,7 +137,7 @@
 
    ;; -- test-case "now/moment"
     (let ([n (now/moment)])
-     (unless (string=? "2015-04-13T04:33:37.986500977-04:00[America/New_York]" (moment->iso8601/tzid n)) (error "test12")))
+     (unless (string=? "2015-04-13T04:33:37.986500977-04:00[America/Montreal]" (moment->iso8601/tzid n)) (error "test12")))
   )
   (for ([d1 dates])
     (datetime->iso8601 d1)
