@@ -186,11 +186,8 @@
     (if gp
       (from-tex gp)
       (begin
-        (printf "Warning: could not find module graph for '~a'.\n" filename)
-        (let ([pth (string->path (strip-suffix filename))])
-          (if pth
-            (from-directory pth)
-            (raise-user-error 'from-rktd (format "Error converting string '~a' to a path" filename)))))))
+        (printf "Inferring module graph for '~a'.\n" filename)
+        (from-directory filename))))
   (validate-modulegraph dataset mg)
   (summary path dataset mg))
 
