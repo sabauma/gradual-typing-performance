@@ -1,5 +1,12 @@
 #lang racket/base
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 (require (only-in "sequencer.rkt" note sequence)
          (only-in "drum.rkt" drum)
          (only-in "mixer.rkt" mix)
@@ -105,4 +112,5 @@
   ;; (small-test) ;; 7ms
   (void))
 
+(for ([i (in-range (sub1 N))]) (main))
 (time (main))
