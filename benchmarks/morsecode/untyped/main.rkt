@@ -3,6 +3,12 @@
 ;; Copyright 2014 John Clements (clements@racket-lang.org)
 ;; Code licensed under the Mozilla Public License 2.0
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
 
 ;; -----------------------------------------------------------------------------
 
@@ -38,5 +44,9 @@
     (string-levenshtein w2 w1)
     (void)))
 
+
+(for ([i (in-range (sub1 N))]) (main words-small))
+(time (main words-small))
+
 ;(time (main allwords)) ;; 68,000ms
-(time (main words-small)) ;; 200ms
+#|(time (main words-small)) ;; 200ms|#

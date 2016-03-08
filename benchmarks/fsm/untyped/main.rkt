@@ -1,5 +1,12 @@
 #lang racket
 
+(define N
+  (let ([args (current-command-line-arguments)])
+    (if (< (vector-length args) 1) 1
+      (let ([n (string->number (vector-ref args 0))])
+        (if (fixnum? n) n
+          (error 'main "must have a fixnum argument"))))))
+
 ;; Run a Simulation of Interacting Automata
 (random-seed 7480)
 
@@ -38,5 +45,8 @@
            (evolve p3 (- c 1) s r))]))
 
 ;; -----------------------------------------------------------------------------
+(for ([i (in-range (sub1 N))])
+  (main))
+
 (time (main))
 

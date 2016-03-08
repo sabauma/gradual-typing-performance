@@ -5,6 +5,13 @@
 
 (require "streams.rkt")
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 ;;--------------------------------------------------------------------------------------------------
 
 ;; `count-from n` Build a stream of integers starting from `n` and iteratively adding 1
@@ -32,4 +39,5 @@
 (define (main)
   (printf "The ~a-th prime number is: ~a\n" (add1 N-1) (stream-get primes N-1)))
 
+(for ([i (in-range (sub1 N))]) (main))
 (time (main))

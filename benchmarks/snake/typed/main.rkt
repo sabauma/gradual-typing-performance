@@ -11,6 +11,13 @@
                      [handle-key (World String . -> . World)]
                      [game-over? (World . -> . Boolean)])
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 (: replay : World (Listof Any) -> Void)
 (define (replay w0 hist)
   (reset!)
@@ -46,4 +53,5 @@
          (error "bad input")]))
 
 ;; (time (main SMALL_TEST)) ; 66ms
-(time (main LARGE_TEST)) ; 340ms
+(for ([i (in-range (sub1 N))]) (main LARGE_TEST))
+(time (main LARGE_TEST))

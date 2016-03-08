@@ -2,6 +2,13 @@
 
 (require "aux.rkt" "world.rkt" "bset.rkt" "data.rkt")
 
+(define N
+  (let ([args (current-command-line-arguments)])
+    (if (< (vector-length args) 1) 1
+      (let ([n (string->number (vector-ref args 0))])
+        (if (fixnum? n) n
+          (error 'main "must have a fixnum argument"))))))
+
 (define (world0)
   (world (list-pick-random tetras) empty))
 
@@ -25,4 +32,5 @@
   (replay w0 (reverse raw)))
 
 ;(time (main SMALL_TEST)) ; 0ms
-(time (main LARGE_TEST)) ; 480ms
+(for ([i (in-range (sub1 N))]) (main LARGE_TEST))
+(time (main LARGE_TEST))
