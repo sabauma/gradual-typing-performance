@@ -35,7 +35,7 @@
     [(zero? c) '()]
     [else (send p match-up* r)
           (define pp (send p payoffs))
-          (send p death-birth s)
+          (send p death-birth s #f)
           (cons (relative-average pp r) (evolve (- c 1) s r))])))
 
 (for ([i (in-range (sub1 N))]) (main))

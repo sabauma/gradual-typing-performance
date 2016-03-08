@@ -15,7 +15,7 @@
  (: sum (-> [Listof Real] Real))
  (: relative-average (-> [Listof Real] Real Real))
  (: choose-randomly
-  (-> [Listof Probability] Natural [#:random (U False Real)] [Listof Natural]))
+  (-> [Listof Probability] Natural (U False Real) [Listof Natural]))
 
 ;; =============================================================================
 
@@ -30,7 +30,7 @@
 
 ;; -----------------------------------------------------------------------------
 
-(define (choose-randomly probabilities speed #:random (q #false))
+(define (choose-randomly probabilities speed (q #false))
   (define %s (accumulated-%s probabilities))
   (for/list ([n (in-range speed)])
     [define r (or q (random))]

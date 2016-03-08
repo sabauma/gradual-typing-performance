@@ -45,7 +45,7 @@
     [else (send p match-up* r)
           ;; Note: r is typed as State even though State is not exported 
           (define pp (send p payoffs))
-          (send p death-birth s)
+          (send p death-birth s #f)
           ;; Note: s same as r
           ({inst cons Payoff [Listof Payoff]}
            (cast (relative-average pp r) Payoff)

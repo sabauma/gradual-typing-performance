@@ -34,7 +34,7 @@
  "automata-adapted.rkt")
 (require/typed/check "utilities.rkt"
  (choose-randomly
-  (-> [Listof Probability] Natural [#:random (U False Real)] [Listof Natural]))
+  (-> [Listof Probability] Natural (U False Real) [Listof Natural]))
 )
 
 ;; Population = (Cons Automaton* Automaton*)
@@ -81,7 +81,7 @@
   (define payoffs
     (for/list : [Listof Payoff] ([x : Automaton (in-vector a*)])
       (automaton-payoff x)))
-  [define substitutes (choose-randomly payoffs rate #:random q)]
+  [define substitutes (choose-randomly payoffs rate q)]
   (for ([i (in-range rate)][p (in-list substitutes)])
     (vector-set! a* i (clone (vector-ref b* p))))
   (shuffle-vector a* b*))

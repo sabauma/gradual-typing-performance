@@ -8,7 +8,7 @@
 (define-type Probability Nonnegative-Real)
 (require/typed/check "utilities.rkt"
  (choose-randomly
-  (-> [Listof Probability] Natural [#:random (U False Real)] [Listof Natural])))
+  (-> [Listof Probability] Natural (U False Real) [Listof Natural])))
 
 (define-type Population
   (Class
@@ -23,7 +23,7 @@
     ;; (death-birth p r) replaces r elements of p with r "children" of 
     ;; randomly chosen fittest elements of p, also shuffle 
     ;; constraint (< r (length p))
-    (-> Natural [#:random (U False Payoff)] Void))))
+    (-> Natural (U False Payoff) Void))))
 (define-type oPopulation (Instance Population))
 
 (define-type Automaton* (Vectorof oAutomaton))
@@ -68,9 +68,9 @@
         (vector-set! a* (+ i 1) a2))
       (void))
     
-    (define/public (death-birth rate #:random (q #false))
+    (define/public (death-birth rate (q #false))
       (define payoffs* (payoffs))
-      [define substitutes (choose-randomly payoffs* rate #:random q)]
+      [define substitutes (choose-randomly payoffs* rate q)]
       (for ([i (in-range rate)][p (in-list substitutes)])
         (vector-set! a* i (send (vector-ref b* p) clone)))
       (shuffle-vector))

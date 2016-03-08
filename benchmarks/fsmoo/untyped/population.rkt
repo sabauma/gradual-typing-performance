@@ -58,9 +58,9 @@
         (vector-set! a* (+ i 1) a2))
       (void))
     
-    (define/public (death-birth rate #:random (q #false))
+    (define/public (death-birth rate (q #false))
       (define payoffs (for/list ([x (in-vector a*)]) (send x pay)))
-      [define substitutes (choose-randomly payoffs rate #:random q)]
+      [define substitutes (choose-randomly payoffs rate q)]
       (for ([i (in-range rate)][p (in-list substitutes)])
         (vector-set! a* i (send (vector-ref b* p) clone)))
       (shuffle-vector))
