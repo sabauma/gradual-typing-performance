@@ -26,7 +26,7 @@
 
 ;; -----------------------------------------------------------------------------
 
-(define (choose-randomly probabilities speed (q #false))
+(define (choose-randomly probabilities speed #:random (q #false))
   (define %s (accumulated-%s probabilities))
   (for/list ([n (in-range speed)])
     [define r (or q (random))]

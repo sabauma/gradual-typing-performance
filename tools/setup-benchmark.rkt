@@ -8,6 +8,8 @@
 (module+ main
   (match (current-command-line-arguments)
     [(vector path)
+     (unless (directory-exists? path)
+       (raise-user-error 'setup "Invalid directory '~a'" path))
      (create-benchmark-dirs path)]))
 
 ;; ===================================================================================================
@@ -18,7 +20,7 @@
 (define UNTYPED "no")
 (define COMMENT (string-append ";; " (make-string 77 #\-)))
 
-(define (create-benchmark-dirs 
+(define (create-benchmark-dirs
          pwd
          #:base [base (build-path pwd "base")]
          #:both [both (build-path pwd "both")]
@@ -68,7 +70,8 @@
   (for/list ([combination (in-list (build-combinations* (length file-names*)))])
     (define cdir (build-path bdir (apply string-append "configuration" (map number->string combination))))
     (make-directory cdir)
-    (create-readme cdir (populate-configuration cdir file-names* combination both typed untyped))
+    (define pop (populate-configuration cdir file-names* combination both typed untyped))
+    ;(create-readme cdir pop)
     cdir))
 
 ;; ---------------------------------------------------------------------------------------------------

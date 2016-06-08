@@ -11,5 +11,6 @@
  #:args (path)
  (let ()
    (system "raco pkg install --skip-installed tools/benchmark-util/")
+   (system "raco pkg install --skip-installed tools/benchmark-run")
    (dynamic-require '(submod "tools/setup-benchmark.rkt" main) #f)
    (void)))

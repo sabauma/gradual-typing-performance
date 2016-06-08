@@ -1,13 +1,6 @@
 #lang typed/racket
 (random-seed 7480)
 
-(define N
- (let ([args (current-command-line-arguments)])
-   (if (< (vector-length args) 1) 1
-     (let ([n (string->number (vector-ref args 0))])
-       (if (fixnum? n) n
-         (error 'main "must have a fixnum argument"))))))
-
 ;; Run a Simulation of Interacting Automata
 ;; Run a Simulation of Interacting Automata
 
@@ -45,7 +38,7 @@
     [else (send p match-up* r)
           ;; Note: r is typed as State even though State is not exported 
           (define pp (send p payoffs))
-          (send p death-birth s #f)
+          (send p death-birth s)
           ;; Note: s same as r
           ({inst cons Payoff [Listof Payoff]}
            (cast (relative-average pp r) Payoff)
@@ -53,5 +46,4 @@
            ;; even though it is explicitly typed ... [Listof Payoff]
            (evolve (- c 1) s r))])))
 
-(for ([i (in-range (sub1 N))]) (main))
 (time (main))

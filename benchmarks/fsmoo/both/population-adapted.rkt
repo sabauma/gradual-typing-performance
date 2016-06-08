@@ -27,4 +27,4 @@
     ;; (death-birth p r) replaces r elements of p with r "children" of 
     ;; randomly chosen fittest elements of p, also shuffle 
     ;; constraint (< r (length p))
-    (-> Natural (U False Payoff) Void))))
+    (-> Natural [#:random (U False Payoff)] Void))))
