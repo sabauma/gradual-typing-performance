@@ -1,5 +1,12 @@
 #lang typed/racket/base
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 (require benchmark-util
  (only-in racket/file file->lines file->string))
 
@@ -19,5 +26,6 @@
   (void))
 
 ;(time (main SMALL_TEST)) ; 110ms
-(time (main LARGE_TEST)) ; 1900ms
+(for ([i (in-range (sub1 N))]) (main LARGE_TEST))
+(time (main LARGE_TEST))
 ;(time (main KCFA_TYPED)) ; 16235ms

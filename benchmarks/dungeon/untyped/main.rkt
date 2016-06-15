@@ -58,6 +58,13 @@
   random
 ))
 
+(define num-iters
+  (let ([args (current-command-line-arguments)])
+    (if (< (vector-length args) 1) 1
+      (let ([n (string->number (vector-ref args 0))])
+        (if (fixnum? n) n
+          (error 'main "must have a fixnum argument"))))))
+
 ;; =============================================================================
 ;(define-type Poss->Cells (Listof (Pairof Pos Cell%)))
 ;(define-type Direction (->* (Pos) (Index) Pos))
@@ -441,6 +448,7 @@
 (define (main)
   (show-grid (smooth-walls (generate-dungeon (range N)))))
 
+(for ([i (in-range (sub1 num-iters))]) (main))
 (time (void (main)))
 ;; Change `void` to `display` to test. Should see:
 ;;............................................................
