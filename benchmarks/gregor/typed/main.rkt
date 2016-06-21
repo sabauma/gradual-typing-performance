@@ -1,5 +1,12 @@
 #lang typed/racket/base
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 (require
   benchmark-util
   "../base/types.rkt"
@@ -170,4 +177,5 @@
     (test-difference dates)))
 
 ;(time (main 10 #f)) ;;134ms
+(for ([i (in-range (sub1 N))]) (main 10 #t))
 (time (main 10 #t)) ;;347ms
