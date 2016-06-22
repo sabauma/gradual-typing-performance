@@ -1,5 +1,12 @@
 #lang typed/racket
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 ;; stress testing run-t on 100 look ups, plus 5 [dis|en]ables
 
 ;; ===================================================================================================
@@ -64,4 +71,5 @@
 
 ;(require/typed contract-profile [contract-profile-thunk (-> (-> Void) Void)])
 ;(contract-profile-thunk main)
+(for ([i (in-range (sub1 N))]) (main))
 (time (main))

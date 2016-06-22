@@ -1,5 +1,12 @@
 #lang racket
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 ;; ===================================================================================================
 (require "run-t.rkt"
          (only-in racket/string string-join))
@@ -53,4 +60,5 @@
 
 ;(require contract-profile)
 ;(contract-profile-thunk main)
+(for ([i (in-range (sub1 N))]) (main))
 (time (main))
