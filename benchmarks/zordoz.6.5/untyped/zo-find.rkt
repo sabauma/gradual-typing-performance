@@ -54,13 +54,13 @@
 ;; Check struct members for matches unless the search has reached its limit.
 (define (zo-find-aux z hist str i lim seen)
   (define-values (title children) (parse-zo z))
-  (define zstr (format "~a" z))
+  (define zstr z)
   (define results
     (cond
      [(and lim (<= lim i))
       '()]
      ;; Terminate search if we're seeing a node for the second time
-     [(and (may-loop? title) (member zstr seen))
+     [(and (may-loop? title) (memq zstr seen))
       '()]
      [else
       ;; Remember current node if we might see it again.
@@ -68,7 +68,7 @@
       (define hist* (cons z hist))
       (append-all (for/list  ([z*  children])
                               (zo-find-aux z* hist* str (add1 i) lim seen*)))]))
-  (if (and (string=? str title) (not (member z seen)))
+  (if (and (string=? str title) (not (memq z seen)))
       (cons (result z hist) results)
       results))
 

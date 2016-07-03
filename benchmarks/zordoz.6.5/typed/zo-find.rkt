@@ -58,27 +58,27 @@
 ;; Recursive helper for `zo-find`.
 ;; Add the current struct to the results, if it matches.
 ;; Check struct members for matches unless the search has reached its limit.
-(: zo-find-aux (-> zo (Listof zo) String Natural (U Natural #f) (Listof String) (Listof result)))
+(: zo-find-aux (-> zo (Listof zo) String Natural (U Natural #f) (Listof zo) (Listof result)))
 (define (zo-find-aux z hist str i lim seen)
   (define-values (title children) (parse-zo z))
-  (define zstr (format "~a" z))
+  (define zstr z)
   (: results (Listof result))
   (define results
     (cond
      [(and lim (<= lim i))
       '()]
      ;; Terminate search if we're seeing a node for the second time
-     [(and (may-loop? title) (member zstr seen))
+     [(and (may-loop? title) (memq zstr seen))
       '()]
      [else
       ;; Remember current node if we might see it again.
-      (: seen* (Listof String))
+      (: seen* (Listof zo))
       (define seen* (if (may-loop? title) (cons zstr seen) seen))
       (: hist* (Listof zo))
       (define hist* (cons z hist))
       (append-all (for/list : (Listof (Listof result)) ([z* : zo children])
                               (zo-find-aux z* hist* str (add1 i) lim seen*)))]))
-  (if (and (string=? str title) (not (member z seen)))
+  (if (and (string=? str title) (not (memq z seen)))
       (cons (result z hist) results)
       results))
 

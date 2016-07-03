@@ -4,6 +4,13 @@
 
 (require "zo-shell.rkt")
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 ;; Stress tests: search entire bytecode for the fairly-common branch struct
 (define SELF-TEST '("../base/zo-shell.zo" "../base/zo-find.zo" "../base/zo-string.zo" "../base/zo-transition.zo"))
 (define (self-test)
@@ -22,6 +29,7 @@
 (define-syntax-rule (main test)
   (with-output-to-file "/dev/null" test #:exists 'append))
 
+(for ([i (in-range (sub1 N))]) (main self-test))
 (time (main self-test)) ; 1316ms
 ;(time (main small-test)) ;
 ;(time (main large-test)) ; 63ms
