@@ -2,12 +2,13 @@
 
 (require
   racket/cmdline
+  racket/list
   racket/match
+  racket/path
   racket/system
   glob)
 
 (struct config (iterations jobid progress systems pattern) #:transparent)
-(struct benchmark config (output-files) #:transparent)
 
 (define (get-arguments argv)
   ;; set! or parameters. Are you testing me Satan?
@@ -66,29 +67,31 @@
   ((foldr cons-case nil-case fnames) '()))
 
 (define (extract-runtimes in-port)
-  (regexp-match* parse-time in-port #:match-select cdr))
+  (regexp-match* parse-time in-port #:match-select cadr))
 
-(define (configuration-name job)
+(define (path->configuration-name job)
   (define path (path-only (string->path job)))
   (path->string (last (explode-path path))))
 
-(define (run-benchmarks c)
+(define (run-benchmarks c output-files)
   (define iters         (config-iterations c))
   (define jid           (config-jobid c))
   (define systems       (config-systems c))
   (define pattern       (config-pattern c))
   (define show-progress (config-progress c))
-  (define output-files  (benchmark-output-files c))
+
+  (unless (= (length output-files) iters)
+    (error "numer of output files does not match iteration count"))
 
   ;; Iterate over each configuration
   (for ([configuration (in-glob pattern)])
 
     (when show-progress
-      (printf "Executing configuration: ~s~n" configuration))
+      (printf "running configuration: ~s~n" configuration))
 
     ;; Write the current configuration on each line
     (for ([file output-files])
-      (write-string configuration file)
+      (write-string (path->configuration-name configuration) file)
       (write-string " " file))
 
     ;; Iterate over each system
@@ -96,8 +99,10 @@
       ;; Run the process
       ;; Command is of the form
       ;; $ <system-with-args> <configuration/main.rkt> <iters>
-      (match-define (list stdout stdin pid stderr monitor-proc)
-                    (process (format "~a ~a ~a" sys configuration iters)))
+      (define cmd (format "~a ~a ~a" sys configuration iters))
+      (when show-progress
+        (printf "$ ~a~n" cmd))
+      (match-define (list stdout stdin pid stderr monitor-proc) (process cmd))
 
       (define (cleanup)
         (close-output-port stdin)
@@ -119,13 +124,12 @@
         ;; Write out the results for each iteration of the system to the
         ;; corresponding file
         (for ([time runtimes] [file output-files])
-          (write-string time file)
+          (write-bytes time file)
           (write-string " "  file)
           (flush-output file)))
 
       ;; Ensure that process handles are closed regardless
-      (dynamic-wind void handle-process cleanup)
-      )
+      (dynamic-wind void handle-process cleanup))
 
     ;; Write a newline for the next configuration
     (for ([file output-files])
@@ -135,6 +139,15 @@
 
 (module+ main
   (define configuration (get-arguments (current-command-line-arguments)))
+  (printf "~s~n" configuration)
+
+  (define output-fnames
+    (for/list ([i (config-iterations configuration)])
+      (format "results.~a.~a" (add1 i) (or (config-jobid configuration) "testing"))))
+
+  (call-with-output-files* output-fnames
+    (λ ports (run-benchmarks configuration ports))
+    #:exists 'truncate)
 
   ;(call-with-output-files* '("/tmp/1" "/tmp/2" "/tmp/3")
     ;(λ (a b c) (write "1" a) (write "2" b) (write "3" c))
@@ -147,9 +160,4 @@
                             ;(add1 i)
                             ;(or (config-jobid configuration) "testing")))
       ;(open-output-file fname #:mode 'text #:exists 'truncate)))
-
-
-  (printf "~s~n" configuration)
-  (printf "~s~n"
-          (regexp-match* parse-time "cpu time: 0 real time: 0 gc time: 0\ncpu time: 1 real time: 1 gc time: 1" #:match-select cdr))
   )
