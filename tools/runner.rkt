@@ -133,7 +133,8 @@
 
     ;; Write a newline for the next configuration
     (for ([file output-files])
-      (newline file))
+      (newline file)
+      (flush-output file))
     )
   )
 
