@@ -24,9 +24,11 @@
     [("-i" "--iterations") i
      "Number of benchmark iterations"
      (set! benchmark-iterations (string->number i))]
+    ;; Job identifier
     [("-j" "--jobid") j
-     "Job identifier: probably should be a number but I don't really care"
+     "Job identifier: ideally the contents of $PBS_JOB_ID"
      (set! benchmark-jobid j)]
+    ;; Print progress information
     [("-p" "--progress")
      "Show job progress"
      (set! benchmark-progress #t)]
@@ -37,7 +39,11 @@
      (set! benchmark-systems (append benchmark-systems (list s)))]
     ;; Extra args are also systems
     #:args (pattern)
-    (config benchmark-iterations benchmark-jobid benchmark-progress benchmark-systems pattern)))
+    (config benchmark-iterations
+            benchmark-jobid
+            benchmark-progress
+            benchmark-systems
+            pattern)))
 
 ;; Parses the result of the time macro
 (define parse-time #rx"cpu time: ([0-9]*) real time: ([0-9]*) gc time: ([0-9]*)")
@@ -59,12 +65,14 @@
 
   ;; Apply the procedure to the list of file handles
   (define (nil-case files)
-    (apply proc (reverse files)))
+    (apply proc files))
 
-  ;; Tricksy bit: the right fold ensures the proc is call in the dynamic context of
-  ;; the iterated sequence of call-with-output-file*, ensuring that all files are
-  ;; cleaned up afterwards.
-  ((foldr cons-case nil-case fnames) '()))
+  ;; Tricksy bit: the left fold ensures the proc is call in the dynamic context of
+  ;; the iterated sequence of call-with-output-file* by accumulating a closure which
+  ;; iteratively opens each file and passes it to the next closure in the chain.
+  ;; Invoking the result on the empty list ensures we invoke the final procedure
+  ;; in the dynamic context of each call-with-output-file* call.
+  ((foldl cons-case nil-case fnames) '()))
 
 (define (extract-runtimes in-port)
   (regexp-match* parse-time in-port #:match-select cadr))
@@ -74,14 +82,10 @@
   (path->string (last (explode-path path))))
 
 (define (run-benchmarks c output-files)
-  (define iters         (config-iterations c))
-  (define jid           (config-jobid c))
-  (define systems       (config-systems c))
-  (define pattern       (config-pattern c))
-  (define show-progress (config-progress c))
+  (match-define (config iters jid show-progress systems pattern) c)
 
   (unless (= (length output-files) iters)
-    (error "numer of output files does not match iteration count"))
+    (error "number of output files does not match iteration count"))
 
   ;; Iterate over each configuration
   (for ([configuration (in-glob pattern)])
@@ -113,7 +117,7 @@
         ;; Wait for the process to finish
         (monitor-proc 'wait)
         ;; Check termination conditions
-        (unless (= (monitor-proc 'exit-code) 0)
+        (unless (zero? (monitor-proc 'exit-code))
           (error "Process terminated with non-zero exit code"))
 
         ;; Success: extract the runtimes
@@ -140,7 +144,6 @@
 
 (module+ main
   (define configuration (get-arguments (current-command-line-arguments)))
-  (printf "~s~n" configuration)
 
   (define output-fnames
     (for/list ([i (config-iterations configuration)])
@@ -148,17 +151,36 @@
 
   (call-with-output-files* output-fnames
     (λ ports (run-benchmarks configuration ports))
+    #:exists 'truncate))
+
+(module+ test
+  (require rackunit)
+
+  (define (choice str n)
+    (define chars  (list->vector (string->list str)))
+    (define (char) (vector-ref chars (random (vector-length chars))))
+    (list->string
+      (for/list ([i (in-range n)])
+        (char))))
+
+  (define (random-file)
+    (define tmp   (find-system-path 'temp-dir))
+    (define fname (choice "abcdefghijklmnopqrstuvwxyz" 15))
+    (build-path tmp fname))
+
+  (define file-names (for/list ([_ (in-range 15)]) (random-file)))
+
+  (call-with-output-files* file-names
+    (λ handles
+       (for ([i (in-range (length handles))]
+             [h handles])
+         (write i h)))
     #:exists 'truncate)
 
-  ;(call-with-output-files* '("/tmp/1" "/tmp/2" "/tmp/3")
-    ;(λ (a b c) (write "1" a) (write "2" b) (write "3" c))
-    ;#:exists 'truncate)
-
-  ;; Open files to be used to store output
-  ;(define output-files
-    ;(for/list ([i (in-range (config-iterations configuration))])
-      ;(define fname (format "results.~a.~a"
-                            ;(add1 i)
-                            ;(or (config-jobid configuration) "testing")))
-      ;(open-output-file fname #:mode 'text #:exists 'truncate)))
+  (for ([i (in-range (length file-names))]
+        [fname file-names])
+    (check-equal? (file-exists? fname) #t)
+    (call-with-input-file* fname
+      (λ (file) (check-equal? (read file) i))))
   )
+
