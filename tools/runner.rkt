@@ -156,9 +156,8 @@
 (module+ test
   (require rackunit)
 
-  (define (choice str n)
-    (define chars  (list->vector (string->list str)))
-    (define (char) (vector-ref chars (random (vector-length chars))))
+  (define (choice chars n)
+    (define (char) (string-ref chars (random (string-length chars))))
     (list->string
       (for/list ([i (in-range n)])
         (char))))
