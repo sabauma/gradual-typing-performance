@@ -1,5 +1,5 @@
 #lang typed/racket/base
-(require benchmark-util
+(require require-typed-check
          (except-in "typed-data.rkt" make-label)
          racket/list)
 
@@ -18,7 +18,7 @@
  [string->label (-> String Label)]
  [string->label/with-sentinel (-> String Label)]
  [vector->label (-> (Vectorof (U Char Symbol)) Label)]
- [vector->label/with-sentinel (-> (Vectorof (U Char Symbol)) Label)]
+ [vector->label/with-sentinel (-> (Vectorof Char) Label)]
  [label-same-source? (-> Label Label Boolean)]
  )
 

@@ -24,7 +24,7 @@
 ;; -----------------------------------------------------------------------------
 
 (require
-  benchmark-util
+  require-typed-check
   "../base/core-types.rkt"
   "../base/quad-types.rkt"
   (only-in racket/list append-map empty? empty split-at-right first splitf-at)
@@ -58,7 +58,7 @@
 )
 (require/typed/check "world.rkt"
   [world:font-size-key QuadAttrKey]
-  [world:font-size-default (Parameterof Float)]
+  [world:font-size-default (Parameterof Positive-Flonum)]
   [world:font-name-key QuadAttrKey]
   [world:font-name-default (Parameterof Font-Name)]
   [world:font-weight-key QuadAttrKey]

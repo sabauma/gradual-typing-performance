@@ -7,7 +7,7 @@
        (if (fixnum? n) n
          (error 'main "must have a fixnum argument"))))))
 
-(require benchmark-util
+(require require-typed-check
  (only-in racket/file file->lines file->string))
 
 (require/typed/check "lcs.rkt"

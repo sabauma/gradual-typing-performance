@@ -16,7 +16,7 @@
           (error 'main "must have a fixnum argument"))))))
 
 (require
-  benchmark-util
+  require-typed-check
   typed/racket/class
   "../base/cell-types.rkt"
   racket/match

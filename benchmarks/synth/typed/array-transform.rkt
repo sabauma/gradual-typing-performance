@@ -2,7 +2,7 @@
 
 (require racket/vector
          (only-in racket/fixnum fx+)
-         benchmark-util
+         require-typed-check
          "typed-data.rkt")
 
 (require/typed/check "array-struct.rkt"
@@ -18,7 +18,7 @@
 (require/typed/check "array-utils.rkt"
   [unsafe-vector-remove (-> Indexes Integer Indexes)]
   [vector-copy-all (-> Indexes Indexes)]
-  [unsafe-vector-insert (-> Indexes Integer Any Indexes)])
+  [unsafe-vector-insert (-> Indexes Integer Integer Indexes)])
 
 (provide array-append*)
 

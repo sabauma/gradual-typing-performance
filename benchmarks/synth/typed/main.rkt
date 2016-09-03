@@ -7,7 +7,7 @@
        (if (fixnum? n) n
          (error 'main "must have a fixnum argument"))))))
 
-(require benchmark-util
+(require require-typed-check
          "typed-data.rkt")
 
 (require/typed/check "sequencer.rkt"

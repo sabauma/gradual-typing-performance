@@ -5,7 +5,7 @@
 ;; -----------------------------------------------------------------------------
 
 (require
- benchmark-util
+ require-typed-check
  "../base/core-types.rkt"
  "../base/quad-types.rkt"
  (only-in racket/list filter-not)
@@ -14,7 +14,7 @@
  (only-in racket/file display-to-file))
 (require/typed/check "world.rkt"
   [world:font-size-key QuadAttrKey]
-  [world:font-size-default (Parameterof Float)]
+  [world:font-size-default (Parameterof Positive-Flonum)]
   [world:font-color-key QuadAttrKey]
   [world:font-color-default (Parameterof String)]
   [world:font-background-key QuadAttrKey]

@@ -4,7 +4,7 @@
 ;; (i.e. dates and times at the same time)
 
 (require
-  benchmark-util
+  require-typed-check
   "core-adapter.rkt"
   "gregor-adapter.rkt"
   racket/match
@@ -19,7 +19,7 @@
   "date.rkt"
     [date->iso8601 (-> Date String)]
     [date->jdn (-> Date Integer)]
-    [jdn->date (-> Exact-Rational Date)]
+    [jdn->date (-> Integer Date)]
     [date->ymd (-> Date YMD)]
     [date (->* (Natural) (Month Natural) Date)]
     [date=? (-> Date Date Boolean)]

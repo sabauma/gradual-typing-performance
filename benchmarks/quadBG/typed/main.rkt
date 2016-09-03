@@ -5,13 +5,13 @@
 ;; -----------------------------------------------------------------------------
 
 (require
- benchmark-util
+ require-typed-check
  "../base/quad-types.rkt"
  (only-in typed/racket/class new send))
 
 (require/typed/check "world.rkt"
   (world:allow-hyphenated-last-word-in-paragraph Boolean)
-  (world:quality-default (Parameterof Index))
+  (world:quality-default (Parameterof Integer))
   (world:draft-quality Index)
 )
 (require/typed/check "quad-main.rkt"

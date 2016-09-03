@@ -12,7 +12,7 @@
 
 (require (only-in racket/list empty?)
          (only-in racket/string string-split string-trim)
-         benchmark-util
+         require-typed-check
          "../base/typed-zo-structs.rkt"
          racket/match)
 
@@ -43,7 +43,7 @@
   ;; (-> zo? string? (listof result?))
   (define-values (_ children) (parse-zo z))
   (append-all (for/list : (Listof (Listof result)) ([z* : zo children])
-                        (zo-find-aux z* '() str 1 lim '()))))
+                        (zo-find-aux z* '() str 1 lim))))
 
 ;; ;; --- private functions
 
@@ -58,8 +58,8 @@
 ;; Recursive helper for `zo-find`.
 ;; Add the current struct to the results, if it matches.
 ;; Check struct members for matches unless the search has reached its limit.
-(: zo-find-aux (-> zo (Listof zo) String Natural (U Natural #f) (Listof zo) (Listof result)))
-(define (zo-find-aux z hist str i lim seen)
+(: zo-find-aux (-> zo (Listof zo) String Natural (U Natural #f) (Listof result)))
+(define (zo-find-aux z hist str i lim)
   (define-values (title children) (parse-zo z))
   (define zstr z)
   (: results (Listof result))
@@ -68,17 +68,15 @@
      [(and lim (<= lim i))
       '()]
      ;; Terminate search if we're seeing a node for the second time
-     [(and (may-loop? title) (memq zstr seen))
+     [(and (may-loop? title) (memq z hist))
       '()]
      [else
       ;; Remember current node if we might see it again.
-      (: seen* (Listof zo))
-      (define seen* (if (may-loop? title) (cons zstr seen) seen))
       (: hist* (Listof zo))
       (define hist* (cons z hist))
       (append-all (for/list : (Listof (Listof result)) ([z* : zo children])
-                              (zo-find-aux z* hist* str (add1 i) lim seen*)))]))
-  (if (and (string=? str title) (not (memq z seen)))
+                              (zo-find-aux z* hist* str (add1 i) lim)))]))
+  (if (and (string=? str title) (not (memq z (map result-zo results))))
       (cons (result z hist) results)
       results))
 

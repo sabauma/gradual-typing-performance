@@ -1,21 +1,20 @@
 #lang typed/racket/base
 
-(require benchmark-util
+(require require-typed-check
          "typed-data.rkt")
 
 (require/typed/check "array-struct.rkt"
   [array-size (-> Array Integer)]
-  [make-array (-> In-Indexes Any Array)]
+  [make-array (-> In-Indexes Flonum Array)]
   [build-array (-> In-Indexes (-> Indexes Float) Array)]
   [unsafe-vector->array (-> Indexes (Vectorof Float) Mutable-Array)])
 
 (require/typed/check "array-utils.rkt"
-  [array-shape-size (-> Indexes Natural)]
+  [array-shape-size (-> Indexes Integer)]
   [check-array-shape (-> In-Indexes (-> Nothing) Indexes)])
 
 (require/typed/check "array-transform.rkt"
-  [array-append* (case-> ((Listof Array) -> Array)
-                         ((Listof Array) Integer -> Array))])
+  [array-append* ((Listof Array) -> Array)])
 
 (require/typed/check "synth.rkt"
   [fs Natural]

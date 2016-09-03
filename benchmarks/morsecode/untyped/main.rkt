@@ -13,7 +13,7 @@
 ;; -----------------------------------------------------------------------------
 
 (require
-  benchmark-util
+  require-typed-check
   (only-in racket/file file->value))
 
 (require (only-in "morse-code-strings.rkt"

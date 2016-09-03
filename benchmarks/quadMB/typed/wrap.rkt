@@ -12,7 +12,7 @@
 ;; -----------------------------------------------------------------------------
 
 (require
-  benchmark-util
+  require-typed-check
   "../base/core-types.rkt"
   "../base/quad-types.rkt"
   "ocm-struct-adapted.rkt"
@@ -73,7 +73,7 @@
   [world:measure-default (Parameterof QuadAttrValue)]
   [world:measure-key QuadAttrKey]
   [world:font-size-key QuadAttrKey]
-  [world:font-size-default (Parameterof Float)]
+  [world:font-size-default (Parameterof Positive-Flonum)]
   [world:font-name-key QuadAttrKey]
   [world:font-name-default (Parameterof Font-Name)]
   [world:font-weight-key QuadAttrKey]

@@ -5,7 +5,7 @@
 ;; -----------------------------------------------------------------------------
 
 (require
- benchmark-util
+ require-typed-check
  "../base/quad-types.rkt"
  (only-in racket/list filter-not)
  (only-in typed/racket/draw Font-Weight Font-Style Font% make-font current-ps-setup pdf-dc% the-color-database)
@@ -30,7 +30,7 @@
   [world:x-position-key Symbol]
   [world:y-position-key Symbol]
   [world:ascent-key Symbol]
-  [world:quality-default (Parameterof Index)]
+  [world:quality-default (Parameterof Integer)]
   [world:draft-quality Index]
   [world:page-key Symbol]
 )

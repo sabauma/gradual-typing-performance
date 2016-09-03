@@ -1,7 +1,6 @@
 #lang typed/racket/base
 
-(require benchmark-util)
-(require/typed/check "aux.rkt"
+(require/typed "aux.rkt"
   (NUM-SLEEP String))
 
 (define (main)

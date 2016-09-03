@@ -8,7 +8,7 @@
          (error 'main "must have a fixnum argument"))))))
 
 (require
-  benchmark-util
+  require-typed-check
   "../base/types.rkt"
   "gregor-adapter.rkt"
   "tzinfo-adapter.rkt"
@@ -33,6 +33,7 @@
     [datetime->posix (-> DateTime Exact-Rational)]
 )
 (require/typed/check "moment.rkt"
+    [current-timezone (Parameterof (U tz #f))]
     [moment (->* (Natural) (Month Natural Natural Natural Natural Natural #:tz (U tz #f) #:resolve-offset (-> (U tzgap tzoverlap) DateTime (U String #f) (U #f Moment) Moment)) Moment)]
     [moment=? (-> Moment Moment Boolean)]
     [UTC String]
@@ -129,7 +130,8 @@
 
 (: test-iso (-> (Listof DateTime) Void))
 (define (test-iso dates)
-  (parameterize ([current-clock (lambda () 1463207954418177/1024000)])
+  (parameterize* ([current-timezone "America/New_York"]
+                  [current-clock (lambda () 1463207954418177/1024000)])
    ;; -- test-case "today"
     (let ([d (today)])
      (unless (string=? "2015-04-13" (date->iso8601 d)) (error "test9")))
