@@ -52,8 +52,7 @@
     (string-levenshtein w2 w1)
     (void)))
 
-(for ([i (in-range (sub1 N))]) (main words-small))
-(time (main words-small))
+(for ([i (in-range N)]) (time (main words-small)))
 
 ;(time (main allwords)) ;; 68,000ms
 #|(time (main words-small)) ;; 200ms|#

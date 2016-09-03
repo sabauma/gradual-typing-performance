@@ -127,6 +127,5 @@
   ;; (small-test) ;; 3ms
   (void))
 
-(for ([i (in-range (sub1 N))]) (main))
-(time (main))
+(for ([i (in-range N)]) (time (main)))
 

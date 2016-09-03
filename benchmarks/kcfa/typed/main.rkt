@@ -10,6 +10,13 @@
   [analyze (-> Exp MonoStore)]
   [format-mono-store (-> MonoStore String)])
 
+(define N
+ (let ([args (current-command-line-arguments)])
+   (if (< (vector-length args) 1) 1
+     (let ([n (string->number (vector-ref args 0))])
+       (if (fixnum? n) n
+         (error 'main "must have a fixnum argument"))))))
+
 ;; =============================================================================
 (define-type MonoStore (HashTable Var (Setof Exp)))
 
@@ -54,5 +61,5 @@
     (analyze e)))
 
 ;;(time (main 5 standard-example)) ;; 0ms
-(time (main 1 ianj)) ;; 20 seconds
+(for ([i (in-range N)]) (time (main 1 ianj))) ;; 20 seconds
 ;;(time (main 2 ianj)) ;; 40 seconds

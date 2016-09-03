@@ -46,5 +46,4 @@
     (error "bad input")))
 
 ;; (time (main SMALL_TEST)) ; 0ms
-(for ([i (in-range (sub1 N))]) (main LARGE_TEST))
-(time (main LARGE_TEST))
+(for ([i (in-range N)]) (time (main LARGE_TEST)))

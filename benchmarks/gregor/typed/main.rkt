@@ -177,5 +177,4 @@
     (test-difference dates)))
 
 ;(time (main 10 #f)) ;;134ms
-(for ([i (in-range (sub1 N))]) (main 10 #t))
-(time (main 10 #t)) ;;347ms
+(for ([i (in-range N)]) (time (main 10 #t)))

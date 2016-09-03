@@ -24,6 +24,5 @@
   (void))
 
 ;(time (main SMALL_TEST)) ;150ms
-(for ([i (in-range (sub1 N))]) (main LARGE_TEST))
-(time (main LARGE_TEST))
+(for ([i (in-range N)]) (time (main LARGE_TEST)))
 ;(time (main KCFA_TYPED)) ; 22567ms

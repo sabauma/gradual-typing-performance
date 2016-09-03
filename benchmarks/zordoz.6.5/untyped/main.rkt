@@ -29,7 +29,6 @@
 (define-syntax-rule (main test)
   (with-output-to-file "/dev/null" test #:exists 'append))
 
-(for ([i (in-range (sub1 N))]) (main self-test))
-(time (main self-test)) ; 1316ms
+(for ([i (in-range N)]) (time (main self-test)))
 ;(time (main small-test)) ;
 ;(time (main large-test)) ; 63ms

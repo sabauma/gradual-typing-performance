@@ -53,5 +53,4 @@
 (define (main)
   (printf "The ~a-th prime number is: ~a\n" (add1 N-1) (stream-get primes N-1)))
 
-(for ([i (in-range (sub1 N))]) (main))
-(time (main))
+(for ([i (in-range N)]) (time (main)))
