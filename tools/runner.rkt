@@ -4,6 +4,7 @@
   racket/cmdline
   racket/list
   racket/match
+  racket/os
   racket/path
   racket/system
   glob)
@@ -117,11 +118,15 @@
         ;; Wait for the process to finish
         (monitor-proc 'wait)
         ;; Check termination conditions
-        (unless (zero? (monitor-proc 'exit-code))
-          (error "Process terminated with non-zero exit code"))
+        ;(unless (zero? (monitor-proc 'exit-code))
+          ;(error "Process terminated with non-zero exit code"))
 
-        ;; Success: extract the runtimes
-        (define runtimes (extract-runtimes stdout))
+        (define runtimes
+          (if (zero? (monitor-proc 'exit-code))
+            ;; Success: extract the runtimes
+            (extract-runtimes stdout)
+            ;; Failure: subprocess crashed
+            (for/list ([_ (in-range iters)]) #"???")))
         (unless (= (length runtimes) iters)
           (error "Got fewer results than iteration count"))
 
@@ -147,7 +152,7 @@
 
   (define output-fnames
     (for/list ([i (config-iterations configuration)])
-      (format "results.~a.~a" (add1 i) (or (config-jobid configuration) "testing"))))
+      (format "results.~a.~a" (add1 i) (or (config-jobid configuration) (getpid)))))
 
   (call-with-output-files* output-fnames
     (λ ports (run-benchmarks configuration ports))
